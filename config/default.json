@@ -1,0 +1,9 @@
+{
+    "port" : 3000,
+    "db":{
+        "host" : "127.0.0.1",
+        "user" : "autorite",
+        "password" : "Rajan@:Walia123",
+        "database" : "autorite_test"
+    }
+}
