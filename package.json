@@ -4,9 +4,9 @@
   "description": "AutoRite Backend",
   "main": "index.js",
   "scripts": {
-    "start": "export NODE_ENV=test && nodemon server.js",
-    "development": "export NODE_ENV=development && node server.js",
-    "production": "export NODE_ENV=production && node server.js"
+    "start": "export NODE_ENV=test && nodemon src/server.js",
+    "development": "export NODE_ENV=development && node src/server.js",
+    "production": "export NODE_ENV=production && node src/server.js"
   },
   "author": "",
   "license": "ISC",
