@@ -28,8 +28,8 @@ let dbHandler = {
         queryObj.args,
         (err, result) => {
           queryObj.sql = finalQuery.sql;
-          // console.log("final",finalQuery);
-          //console.log("Query ",queryObj);
+          //console.log("final", finalQuery);
+          // console.log("Query ", queryObj);
           queryObj.sql = queryObj.sql.replace(/[\n\t]/g, "");
 
           let event = queryObj.event || "Executing mysql query";
@@ -63,5 +63,5 @@ let dbHandler = {
 }
 
 module.exports = {
-    dbHandler
+  dbHandler
 }
