@@ -13,7 +13,11 @@ if (config.env !== 'test') {
 app.use(express.json());
 // parse the urlencoded request body
 app.use(express.urlencoded({ extended: true }));
-
+app.get("/hello", (req, res) => {
+  return res.send(
+    "Hello World"
+  )
+})
 app.use("/api", require("./routes"));
 
 // send back a 404 error for any unknown api request
