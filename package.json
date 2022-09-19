@@ -4,7 +4,7 @@
   "description": "AutoRite Backend",
   "main": "index.js",
   "scripts": {
-    "start": "export NODE_ENV=development && node src/server.js",
+    "start": "nodemon src/server.js",
     "development": "export NODE_ENV=test && node src/server.js",
     "production": "export NODE_ENV=production && node src/server.js"
   },
@@ -19,7 +19,7 @@
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
     "morgan": "^1.10.0",
-    "mysql": "^2.18.1",
+    "mysql2": "^2.3.3",
     "winston": "^3.8.2"
   },
   "devDependencies": {

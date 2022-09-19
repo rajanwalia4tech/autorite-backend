@@ -5,7 +5,7 @@ const httpStatus = require("http-status");
 const bcrypt = require("bcrypt");
 
 const isPasswordMatch = async (user, password) => {
-  return await bcrypt.compare(user.password, password);
+  return await bcrypt.compare(password, user.password);
 }
 
 /**
@@ -19,6 +19,7 @@ const loginUserWithEmailAndPassword = async (email, password) => {
   if (!user || !(await isPasswordMatch(user, password))) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }
+  delete user.password;
   return user;
 };
 
