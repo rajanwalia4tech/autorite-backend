@@ -11,5 +11,6 @@
         "refreshExpirationDays": 30,
         "resetPasswordExpirationMinutes": 30,
         "verifyEmailExpirationMinutes": 10
-    }
+    },
+    "openAPIKey": "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"
 }

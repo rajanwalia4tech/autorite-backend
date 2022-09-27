@@ -2,7 +2,9 @@ const express = require('express');
 const app = express();
 const config = require("./config");
 const morgan = require("./config/morgan");
+const httpStatus = require("http-status");
 const { errorConverter, errorHandler } = require("./middlewares/error");
+const ApiError = require("./utils/ApiError");
 
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
