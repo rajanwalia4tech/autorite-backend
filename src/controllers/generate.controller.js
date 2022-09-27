@@ -1,5 +1,5 @@
 const httpStatus = require("http-status");
-const catchAsync = require("../utils/catchAsync");
+const catchAsync = require("../utils/CatchAsync");
 const {generateService} =require("../services");
 
 const getAllUsecases = catchAsync(async (req, res) => {
