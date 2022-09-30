@@ -7,16 +7,17 @@
     },
     "jwt": {
         "secret": "this is secret",
-        "accessExpirationMinutes": 30,
-        "refreshExpirationDays": 30,
+        "accessExpirationMinutes": 1440,
+        "refreshExpirationDays": 1440,
         "resetPasswordExpirationMinutes": 30,
         "verifyEmailExpirationMinutes": 10
     },
     "openAPIKey": "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",
     "aws":{
-        "accessKeyID": "AKIA5KXDCXEO66USEIAN",
+        "accessKeyId": "AKIA5KXDCXEO66USEIAN",
         "secretAccessKey": "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",
         "region" : "ap-south-1"
-    }
+    },
+    "sourceEmail" : "rajanwalia334@gmail.com" 
 
 }

@@ -15,6 +15,14 @@ const createUser = async (userBody) => {
     return userBody;
 }
 
+const getUserById = async (id) => {
+    const [user] = await User.getUserById(id);
+    if (!user) {
+        throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+    }
+    return user;
+}
 module.exports = {
-    createUser
+    createUser,
+    getUserById
 }

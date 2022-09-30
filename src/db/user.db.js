@@ -34,7 +34,26 @@ const getUserByEmail = (email) => {
     });
 }
 
+const getUserById = (id) => {
+    return new Promise(async (resolve, reject) => {
+        const query = `SELECT * FROM users WHERE id=?`;
+        let queryObj = {
+            query,
+            args: [id],
+            event: "getUserByEmail"
+        }
+        dbHandler.executeQuery(queryObj)
+            .then((result) => {
+                resolve(result);
+            }).catch((err) => {
+                reject(err);
+            });
+    });
+}
+
+
 module.exports = {
     create,
-    getUserByEmail
+    getUserByEmail,
+    getUserById
 }

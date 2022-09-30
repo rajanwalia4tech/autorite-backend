@@ -1,6 +1,6 @@
 const httpStatus = require("http-status");
 const catchAsync = require("../utils/CatchAsync");
-const { userService, tokenService, authService } = require("../services");
+const { userService, tokenService, authService, emailService } = require("../services");
 
 
 const register = catchAsync(async (req, res) => {
@@ -16,7 +16,27 @@ const login = catchAsync(async (req, res) => {
     res.send({ user, tokens });
 })
 
+const sendVerificationEmail = catchAsync(async (req, res) => {
+    const user = {
+        id : req.body.user_id,
+        email: "rajanwalia334@gmail.com" || req.body.email
+    }
+    const verificationEmailToken = await tokenService.generateVerifyEmailToken(user);
+    const userInfo = await userService.getUserById(user.id);
+    await emailService.sendVerificationEmail(userInfo.name,user.email, verificationEmailToken);
+    return res.status(httpStatus.OK).send({message: "Verification email sent"});
+});
+
+const verifyEmail = catchAsync(async (req, res) => {
+    const { token } = req.query;
+    const user = await tokenService.verifyEmailToken(token);
+    await userService.verifyEmail(user.id);
+    res.status(httpStatus.OK).send({message: "Email verified successfully"});
+});
+
 module.exports = {
     register,
-    login
+    login,
+    sendVerificationEmail,
+    verifyEmail
 }
