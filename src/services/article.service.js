@@ -176,11 +176,11 @@ async function createArticle(keyword,location){
     try{
         const usecases = await generateService.getAllUsecases();
         const questionsHeadings = await getAllQuestionsAndHeadings(keyword,location,usecases);
-        const answers = await getAnswersAndParagraph(keyword,questionsHeadings,usecases);
+        const result = await getAnswersAndParagraph(keyword,questionsHeadings,usecases);
         const article = {
             keyword,
             location,
-            answers
+            result
         };
         return article;
     }catch(err){
