@@ -10,8 +10,8 @@ const getAllUsecases = catchAsync(async (req, res) => {
 const generate = catchAsync(async (req, res) => {
     const request = {...req.body};
     const usecaseInfo = await generateService.getUsecaseById(request.usecaseId);
-    const completion = await generateService.generate(request,usecaseInfo);
-    return res.status(httpStatus.OK).send(completion);
+    const result = await generateService.generate(request,usecaseInfo);
+    return res.status(httpStatus.OK).send(result);
 });
 
 

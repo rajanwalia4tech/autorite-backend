@@ -21,7 +21,7 @@ const getUsecaseById = async (usecase_id)=>{
 const generate = async(payload,usecaseInfo)=>{
     const openAIPayload = createOpenAIPayload(payload,usecaseInfo);
     const completion = await hitOpenAICompletion(openAIPayload);
-    return completion;
+    return completion.data.choices;
 }
 
 const createOpenAIPayload = (payload,usecaseInfo)=>{
@@ -59,11 +59,11 @@ const createPrompt = (payload,usecaseInfo)=>{
 const hitOpenAICompletion = async (payload)=>{
     try {
         const configuration = new Configuration({
-            apiKey: config.openAPIKey,
+            apiKey: config.apiKeys.openAI,
         });          
         const openai = new OpenAIApi(configuration);
         const completion = await openai.createCompletion(payload);
-        return completion.data.choices;
+        return completion;
     } catch (error) {
         if (error.response) {
             console.log(error.response.status);

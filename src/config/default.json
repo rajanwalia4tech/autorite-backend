@@ -12,12 +12,14 @@
         "resetPasswordExpirationMinutes": 30,
         "verifyEmailExpirationMinutes": 10
     },
-    "openAPIKey": "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",
     "aws":{
         "accessKeyId": "AKIA5KXDCXEO66USEIAN",
         "secretAccessKey": "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",
         "region" : "ap-south-1"
     },
-    "sourceEmail" : "rajanwalia334@gmail.com" 
-
+    "sourceEmail": "rajanwalia334@gmail.com",
+    "apiKeys":{
+        "openAI": "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",
+        "valueSerp": "DE0DAFD4DE614591B6ADF68CD7051628"
+    }
 }
