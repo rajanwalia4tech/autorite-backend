@@ -1,5 +1,9 @@
 const apiCalls = require("../helpers/apiCalls");
 const {generateService} = require("../services");
+const {Article} = require("../db");
+const {ARTICLE} = require("../utils/constants");
+const ApiError = require("../utils/ApiError");
+const httpStatus = require("http-status");
 
 function getRelatedQuestions(keyword,location){
     return new Promise(async (resolve,reject)=>{
@@ -141,6 +145,7 @@ async function getIntroductionParagraph(keyword,usecase){
     try{
         const result = await generateService.generate({topic:keyword},usecase);
         let introductionParagraph = result[0].text.trim();
+        introductionParagraph = introductionParagraph.startsWith("Introduction Paragraph:")?introductionParagraph.substring(24):introductionParagraph;
         return introductionParagraph;
     }catch(err){
         throw err;
@@ -172,22 +177,86 @@ async function getAnswersAndParagraph(keyword,payload,usecases){
 
 }
 
-async function createArticle(keyword,location){
+async function createArticle(userId,keyword,location){
+    let articleId;
     try{
+        const article = await Article.saveArticle({user_id:userId,keyword,location,status:ARTICLE.STATUS.IN_PROGRESS});
+        articleId = article.insertId;
         const usecases = await generateService.getAllUsecases();
         const questionsHeadings = await getAllQuestionsAndHeadings(keyword,location,usecases);
-        const result = await getAnswersAndParagraph(keyword,questionsHeadings,usecases);
-        const article = {
-            keyword,
-            location,
-            result
-        };
-        return article;
+        let  result = await getAnswersAndParagraph(keyword,questionsHeadings,usecases);
+        
+        await Article.saveArticleInfo({
+            user_id : userId,
+            article_id:articleId,
+            related_questions: JSON.stringify(result.relatedQuestionsAnswers),
+            ai_questions: JSON.stringify(result.aiQuestionAnswers),
+            quora_questions: JSON.stringify(result.quoraQuestionsAnswers),
+            headings_paragraph : JSON.stringify(result.headingsParagraphs),
+            conclusion_paragraph : result.conclusionParagraph,
+            introduction_paragraph : result.introductionParagraph
+        });
+        await Article.updateArticle({
+            user_id : userId,
+            article_id:articleId,
+            fields:{
+                status:ARTICLE.STATUS.COMPLETED
+            }
+        })
+        return articleId;
     }catch(err){
-        throw err;
+        if(articleId){
+            await Article.updateArticle({
+                user_id : userId,
+                article_id:articleId,
+                fields:{
+                    status:ARTICLE.STATUS.FAILED
+                }
+            })
+        }
+        console.log("Error in createArticle",err);
+        throw new ApiError(httpStatus.BAD_REQUEST,ARTICLE.ERROR.CREATION_FAILED);
     }
 }
 
+async function getArticle(userId,articleId){
+    try{
+        const [articleInfo] = await Article.getArticleInfo({
+            user_id : userId,
+            article_id:articleId
+        })
+        if(articleInfo){
+            return articleInfo;
+        }else{
+            throw new ApiError(httpStatus.NOT_FOUND,ARTICLE.ERROR.NOT_FOUND);
+        }
+    }catch(err){
+        console.log("getArticle",err);
+        if(err.statusCode == httpStatus.NOT_FOUND)
+            throw err;
+        throw new ApiError(httpStatus.BAD_REQUEST,ARTICLE.ERROR.FETCH_FAILED);
+    }
+}
+
+async function getAllArticles(userId){
+    try{
+        const articles = await Article.getAllArticlesByUserId({
+            user_id : userId
+        })
+        if(articles){
+            return articles;
+        }else{
+            throw new ApiError(httpStatus.NOT_FOUND ,ARTICLE.ERROR.NOT_FOUND);
+        }
+    }catch(err){
+        console.log("getAllArticles",err);
+        if(err.statusCode == httpStatus.NOT_FOUND)
+            throw err;
+        throw new ApiError(httpStatus.BAD_REQUEST,ARTICLE.ERROR.FETCH_FAILED);
+    }
+}
 module.exports = {
-    createArticle
+    createArticle,
+    getArticle,
+    getAllArticles
 }
