@@ -4,3 +4,4 @@ module.exports.authService = require("./auth.service");
 module.exports.generateService = require("./generate.service");
 module.exports.emailService = require("./email.service");
 module.exports.articleService = require("./article.service");
+module.exports.commonService = require("./common.service");
