@@ -1,8 +1,10 @@
-const { User } = require("../db");
+const { User, Token } = require("../db");
 const ApiError = require("../utils/ApiError");
 const { tokenTypes } = require("../config/tokens");
 const httpStatus = require("http-status");
 const bcrypt = require("bcrypt");
+const { tokenService, userService } = require("./");
+const config = require("../config");
 
 const isPasswordMatch = async (user, password) => {
   return await bcrypt.compare(password, user.password);
@@ -42,6 +44,36 @@ const loginUserWithEmailAndPassword = async (email, password) => {
   }
 };
 
+const refreshTokens = async(refreshToken)=>{
+  try{
+    const tokenInfo = await tokenService.verifyToken(refreshToken,tokenTypes.REFRESH,config.jwt.refreshTokenSecret);
+    const user = await userService.getUserById(tokenInfo.user_id);
+    // blacklist old Token
+    await Token.updateToken({token_id:tokenInfo.id,fields:{blacklisted:true}});
+    const tokens = await tokenService.generateAuthTokens(user);
+    return tokens;
+  }catch(err){
+    throw new ApiError(httpStatus.UNAUTHORIZED,"Invalid Token");
+  }
+}
+
+const logout = async(userId,refreshToken)=>{
+  try{
+    const [tokenInfo] = await Token.findToken({ token:refreshToken, type:tokenTypes.REFRESH, user_id: userId, blacklisted: false });
+    if (!tokenInfo) {
+      throw new Error();
+    }
+
+    // blacklist old Token
+    await Token.updateToken({token_id:tokenInfo.id,fields:{ blacklisted: true }});
+    return true;
+  }catch(err){
+    throw new ApiError(httpStatus.UNAUTHORIZED,"Invalid Token");
+  }
+}
+
 module.exports = {
-  loginUserWithEmailAndPassword
+  loginUserWithEmailAndPassword,
+  refreshTokens,
+  logout
 }

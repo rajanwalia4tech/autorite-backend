@@ -15,7 +15,7 @@ const { tokenTypes } = require('../config/tokens');
  * @param {string} [secret]
  * @returns {string}
  */
-const generateToken = (userId, email, expires, type, secret = config.jwt.secret) => {
+const generateToken = (userId, email, expires, type, secret = config.jwt.accessTokenSecret) => {
   const payload = {
     user_id: userId,
     email : email,
@@ -52,13 +52,17 @@ const saveToken = async (token, userId, expires, type, blacklisted = false) => {
  * @param {string} type
  * @returns {Promise<Token>}
  */
-const verifyToken = async (token, type) => {
-  const payload = jwt.verify(token, config.jwt.secret);
-  const tokenDoc = await Token.findOne({ token, type, user: payload.sub, blacklisted: false });
-  if (!tokenDoc) {
-    throw new Error('Token not found');
+const verifyToken = async (token, type, secret=config.jwt.accessTokenSecret) => {
+  try{
+    const payload = jwt.verify(token, secret);
+    const [tokenInfo] = await Token.findToken({ token, type, user_id: payload.user_id, blacklisted: false });
+    if (!tokenInfo) {
+      throw new Error();
+    }
+    return tokenInfo;
+  }catch(err){
+    throw new ApiError(httpStatus.UNAUTHORIZED,"Invalid Token");
   }
-  return tokenDoc;
 };
 
 /**
@@ -71,7 +75,7 @@ const generateAuthTokens = async (user) => {
   const accessToken = generateToken(user.id, user.email, accessTokenExpires, tokenTypes.ACCESS);
 
   const refreshTokenExpires = moment().add(config.jwt.refreshExpirationDays, 'days');
-  const refreshToken = generateToken(user.id, user.email, refreshTokenExpires, tokenTypes.REFRESH);
+  const refreshToken = generateToken(user.id, user.email, refreshTokenExpires, tokenTypes.REFRESH,config.jwt.refreshTokenSecret);
   await saveToken(refreshToken, user.id, refreshTokenExpires, tokenTypes.REFRESH);
 
   return {

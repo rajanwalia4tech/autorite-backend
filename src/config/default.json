@@ -6,9 +6,10 @@
         "database": "autorite"
     },
     "jwt": {
-        "secret": "this is secret",
-        "accessExpirationMinutes": 1440,
-        "refreshExpirationDays": 1440,
+        "accessTokenSecret": "this is secret",
+        "refreshTokenSecret" : "this is refresh Token Secret",
+        "accessExpirationMinutes": 1,
+        "refreshExpirationDays": 30,
         "resetPasswordExpirationMinutes": 30,
         "verifyEmailExpirationMinutes": 10
     },

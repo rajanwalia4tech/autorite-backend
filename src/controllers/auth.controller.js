@@ -34,9 +34,21 @@ const verifyEmail = catchAsync(async (req, res) => {
     res.status(httpStatus.OK).send({message: "Email verified successfully"});
 });
 
+const refreshTokens = catchAsync(async (req,res)=>{
+    const tokens = await authService.refreshTokens(req.body.refreshToken);
+    return res.status(httpStatus.OK).send({...tokens});
+})
+
+const logout = catchAsync(async (req,res)=>{
+    await authService.logout(req.body.user_id,req.body.refreshToken);
+    return res.status(httpStatus.OK).send({ message: "Logged out successfully" });
+})
+
 module.exports = {
     register,
     login,
     sendVerificationEmail,
-    verifyEmail
+    verifyEmail,
+    refreshTokens,
+    logout
 }

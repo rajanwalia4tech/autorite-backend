@@ -37,10 +37,17 @@ const verifyEmail = {
     }),
 };
 
+const refreshTokens = {
+    body: Joi.object().keys({
+      refreshToken: Joi.string().required(),
+    }),
+};
+  
 module.exports = {
     register,
     login,
     logout,
     resetPassword,
     verifyEmail,
+    refreshTokens
 };
