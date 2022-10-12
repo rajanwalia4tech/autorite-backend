@@ -8,7 +8,7 @@
     "jwt": {
         "accessTokenSecret": "this is secret",
         "refreshTokenSecret" : "this is refresh Token Secret",
-        "accessExpirationMinutes": 1,
+        "accessExpirationMinutes": 1440,
         "refreshExpirationDays": 30,
         "resetPasswordExpirationMinutes": 30,
         "verifyEmailExpirationMinutes": 10

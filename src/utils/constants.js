@@ -14,6 +14,24 @@ module.exports = {
             CREATED : "Article created successfully",
         }
     },
+    WORDPRESS:{
+      ERROR : {
+        USERNAME: "you have entered an invalid username",
+        PASSWORD: "you have entered an invalid password",
+        DOMAIN: "you have entered an invalid domain",
+        GENERIC_ERR: "something went wrong",
+        RECONNECT_ERR: "Authorization failed. Please re-connect the app.",
+        NOT_CONNECTED: "You are not connected to wordpress",
+      },
+      SUCCESS:{
+        CONNECTED: "You have connected to wordpress successfully",
+      },
+      ROUTE_TYPE:{
+        USERS: "users",
+        CATEGORIES: "categories",
+        TAGS: "tags"
+      }
+    },
     COMMON:{
         DEFAULT_LOCATIONS : [
             {
