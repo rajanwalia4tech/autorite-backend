@@ -6,6 +6,14 @@ const getArticleById = {
     })
 };
 
+const create = {
+    body: Joi.object().keys({
+        keyword: Joi.string().required(),
+        location: Joi.string().required(),
+    }),
+};
+
 module.exports = {
-    getArticleById
+    getArticleById,
+    create
 }

@@ -1,4 +1,9 @@
 module.exports = {
+    ERROR : {
+      MESSAGE : "Something went wrong"
+    },
+    SUCCESS : {
+    },
     ARTICLE:{
         STATUS:{
             IN_PROGRESS:"processing",
@@ -22,6 +27,8 @@ module.exports = {
         GENERIC_ERR: "something went wrong",
         RECONNECT_ERR: "Authorization failed. Please re-connect the app.",
         NOT_CONNECTED: "You are not connected to wordpress",
+        CONNECTED: "You are already connected to wordpress",
+        ALREADY_CONNECTED_DOMAIN : "Domain is is already connected with another user"
       },
       SUCCESS:{
         CONNECTED: "You have connected to wordpress successfully",

@@ -1,5 +1,5 @@
 const {Wordpress} = require("../db")
-const {WORDPRESS} =require("../utils/constants")
+const {WORDPRESS,ERROR} =require("../utils/constants")
 const axios = require("axios")
 const ApiError = require("../utils/ApiError")
 const httpStatus = require("http-status");
@@ -13,14 +13,22 @@ const saveUserWordpressInfo = async(wordPressInfo)=>{
         throw error;
     }
 }
+
+const isDomainAlreadyConnected = async(domain)=>{
+    const [wordpressInfo] = await Wordpress.findByDomain(domain);
+    if(wordpressInfo)
+        throw new ApiError(httpStatus.NOT_FOUND, WORDPRESS.ERROR.ALREADY_CONNECTED_DOMAIN);
+    return ;
+}
+
 const getUserWordpressInfo = async(userId)=>{
     try {
         const [wordpressInfo] = await Wordpress.findByUserId(userId);
         if(!wordpressInfo)
-            throw new Error();
+            throw new ApiError(httpStatus.NOT_FOUND, WORDPRESS.ERROR.NOT_CONNECTED);
         return wordpressInfo;
     } catch (error) {
-        throw new ApiError(httpStatus.NOT_FOUND, WORDPRESS.ERROR.NOT_CONNECTED);
+        throw new ApiError(httpStatus.NOT_FOUND, ERROR.MESSAGE);
     }
 }
 
@@ -81,10 +89,18 @@ const verifyWordpressCredentials = async (username,password,domain) => {
             if (error && error.response && error.response.data && error.response.data.code == "empty_content") {
                 return true;
             } else if (error.code == "ENOTFOUND") {
-                reject({ message: WORDPRESS.ERROR.DOMAIN })
+                throw new ApiError(httpStatus.BAD_REQUEST ,WORDPRESS.ERROR.DOMAIN)
             } else {
-                let message = (error && error.response && error.response.data && error.response.data.code == "invalid_username" ? message = WORDPRESS.ERROR.USERNAME : error && error.response && error.response.data && error.response.data.code == "incorrect_password") ? WORDPRESS.ERROR.PASSWORD: WORDPRESS.ERROR.GENERIC_ERR
-                throw new ApiError(httpStatus.BAD_REQUEST ,"test")
+                // let message = (error && error.response && error.response.data && error.response.data.code == "invalid_username" ? message = WORDPRESS.ERROR.USERNAME : error && error.response && error.response.data && error.response.data.code == "incorrect_password") ? WORDPRESS.ERROR.PASSWORD: WORDPRESS.ERROR.GENERIC_ERR
+                let message = WORDPRESS.ERROR.GENERIC_ERR
+                if(error && error.response && error.response.data){
+                    if(error.response.data.code == "invalid_username"){
+                        message = WORDPRESS.ERROR.USERNAME;
+                    }else if(error.response.data.code == "incorrect_password"){
+                        message = WORDPRESS.ERROR.PASSWORD;
+                    }
+                }
+                throw new ApiError(httpStatus.BAD_REQUEST ,message)
             }
         }
 }
@@ -93,5 +109,6 @@ module.exports = {
     saveUserWordpressInfo,
     verifyWordpressCredentials,
     getWordPressDetails,
-    getUserWordpressInfo
+    getUserWordpressInfo,
+    isDomainAlreadyConnected
 }

@@ -8,6 +8,8 @@ const connect = catchAsync(async (req, res) => {
     const {username, domain ,password,user_id} = req.body;
     // throw new ApiError(httpStatus.BAD_REQUEST ,"test")
     // test if they are valid or not
+    await wordpressService.isDomainAlreadyConnected(domain);
+    
     await wordpressService.verifyWordpressCredentials(username,password,domain);
 
     // then store them in DB

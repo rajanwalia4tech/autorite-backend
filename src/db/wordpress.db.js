@@ -21,11 +21,28 @@ const create = (payload)=>{
 
 const findByUserId = (userId)=>{
     return new Promise(async (resolve, reject) => {
-        const query = `SELECT * FROM user_wordpress_info WHERE user_id = ?;`;
+        const query = `SELECT * FROM user_wordpress_info WHERE user_id = ? AND is_connected=1 ORDER BY updated_at DESC LIMIT 1;`;
         let queryObj = {
             query,
             args: [userId],
-            event: "save user wordpress info"
+            event: "find user wordpress info"
+        }
+        dbHandler.executeQuery(queryObj)
+            .then((result) => {
+                resolve(result);
+            }).catch((err) => {
+                reject(err);
+            });
+    });
+}
+
+const findByDomain = (domain)=>{
+    return new Promise(async (resolve, reject) => {
+        const query = `SELECT * FROM user_wordpress_info WHERE domain = ? AND is_connected=1 ORDER BY updated_at DESC;`;
+        let queryObj = {
+            query,
+            args: [domain],
+            event: "findByDomain"
         }
         dbHandler.executeQuery(queryObj)
             .then((result) => {
@@ -38,5 +55,6 @@ const findByUserId = (userId)=>{
 
 module.exports = {
     create,
-    findByUserId
+    findByUserId,
+    findByDomain
 }

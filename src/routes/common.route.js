@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const commonController = require("../controllers/common.controller");
-
-router.get("/locations",commonController.getLocations);
+const auth = require("../middlewares/auth");
+router.get("/locations",auth.user,commonController.getLocations);
 
 
 module.exports = router;
