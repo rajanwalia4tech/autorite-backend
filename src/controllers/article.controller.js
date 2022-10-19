@@ -5,8 +5,8 @@ const {ARTICLE} = require("../utils/constants");
 
 
 const create = catchAsync(async (req, res) => {
-    const {keyword,location,user_id} = req.body;
-    const articleId = await articleService.createArticle(user_id,keyword,location);
+    const {keyword,location,user_id,title} = req.body;
+    const articleId = await articleService.createArticle(user_id,keyword,title,location);
     res.status(httpStatus.CREATED).send({
         articleId,
         message : ARTICLE.SUCCESS.CREATED

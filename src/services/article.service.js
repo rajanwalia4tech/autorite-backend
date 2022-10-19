@@ -152,8 +152,37 @@ async function getIntroductionParagraph(keyword,usecase){
     }
 }
 
+async function getTitle(keyword,usecase){
+    try{
+        const result = await generateService.generate({keyword},usecase);
+        let titles = result[0].text.trim().split("\n");
+        titles = removeCounting(titles);
+        return titles[0];
+    }catch(err){
+        console.error(err)
+        return "";
+    }
+}
 
-async function getAnswersAndParagraph(keyword,payload,usecases){
+function removeCounting(arr){
+    return arr.map(el=>{
+        return el.replace(/\d+\.\s/g,""); // Add optional space \s
+    })
+}
+
+async function getMetaDescription(keyword,title,usecase){
+    try{
+        const result = await generateService.generate({topic:title,keywords : keyword},usecase);
+        let metaDescription = result[0].text.trim().split("\n");
+        metaDescription = removeCounting(metaDescription);
+        return metaDescription[0];
+    }catch(err){
+        console.error(err)
+        return "";
+    }
+}
+
+async function getAnswersAndParagraph(keyword,title,payload,usecases){
     try{
        const relatedQuestionsAnswers = getQuestionsAnswers(payload.relatedQuestions,usecases[2]);
        const aiQuestionAnswers =  getQuestionsAnswers(payload.aiQuestions,usecases[2]);
@@ -161,7 +190,8 @@ async function getAnswersAndParagraph(keyword,payload,usecases){
        const headingsParagraphs =  getHeadingsParagraphs(payload.aiHeadings,keyword,usecases[4]);
        const conclusionParagraph = getConclusionParagraph(keyword,usecases[5]);
        const introductionParagraph = getIntroductionParagraph(keyword,usecases[6]);
-       const result = await Promise.all([relatedQuestionsAnswers,aiQuestionAnswers,quoraQuestionsAnswers,headingsParagraphs,conclusionParagraph,introductionParagraph]);
+       const metaDescription = getMetaDescription(keyword,title, usecases[8]);
+       const result = await Promise.all([relatedQuestionsAnswers,aiQuestionAnswers,quoraQuestionsAnswers,headingsParagraphs,conclusionParagraph,introductionParagraph,metaDescription]);
 
        return {
             relatedQuestionsAnswers:result[0],
@@ -169,7 +199,8 @@ async function getAnswersAndParagraph(keyword,payload,usecases){
             quoraQuestionsAnswers:result[2],
             headingsParagraphs:result[3],
             conclusionParagraph:result[4],
-            introductionParagraph:result[5]
+            introductionParagraph:result[5],
+            metaDescription:result[6]
         };
     }catch(err){
         throw err;
@@ -177,16 +208,20 @@ async function getAnswersAndParagraph(keyword,payload,usecases){
 
 }
 
-async function createArticle(userId,keyword,location){
+async function createArticle(userId,keyword,title,location){
     let articleId;
     try{
         const article = await Article.saveArticle({user_id:userId,keyword,location,status:ARTICLE.STATUS.IN_PROGRESS});
         articleId = article.insertId;
+        
         const usecases = await generateService.getAllUsecases();
+        if(!title)
+            title = await getTitle(keyword,usecases[7]);
         const questionsHeadings = await getAllQuestionsAndHeadings(keyword,location,usecases);
-        let  result = await getAnswersAndParagraph(keyword,questionsHeadings,usecases);
+        let  result = await getAnswersAndParagraph(keyword,title,questionsHeadings,usecases);
         
         await Article.saveArticleInfo({
+            title,
             user_id : userId,
             article_id:articleId,
             related_questions: JSON.stringify(result.relatedQuestionsAnswers),
@@ -194,13 +229,15 @@ async function createArticle(userId,keyword,location){
             quora_questions: JSON.stringify(result.quoraQuestionsAnswers),
             headings_paragraph : JSON.stringify(result.headingsParagraphs),
             conclusion_paragraph : result.conclusionParagraph,
-            introduction_paragraph : result.introductionParagraph
+            introduction_paragraph : result.introductionParagraph,
+            meta_description : result.metaDescription
         });
         await Article.updateArticle({
             user_id : userId,
             article_id:articleId,
             fields:{
-                status:ARTICLE.STATUS.COMPLETED
+                status:ARTICLE.STATUS.COMPLETED,
+                title
             }
         })
         return articleId;
@@ -210,7 +247,8 @@ async function createArticle(userId,keyword,location){
                 user_id : userId,
                 article_id:articleId,
                 fields:{
-                    status:ARTICLE.STATUS.FAILED
+                    status:ARTICLE.STATUS.FAILED,
+                    title : title || null
                 }
             })
         }
