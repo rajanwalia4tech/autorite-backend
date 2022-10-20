@@ -92,6 +92,7 @@ const verifyWordpressCredentials = async (username,password,domain) => {
                 throw new ApiError(httpStatus.BAD_REQUEST ,WORDPRESS.ERROR.DOMAIN)
             } else {
                 // let message = (error && error.response && error.response.data && error.response.data.code == "invalid_username" ? message = WORDPRESS.ERROR.USERNAME : error && error.response && error.response.data && error.response.data.code == "incorrect_password") ? WORDPRESS.ERROR.PASSWORD: WORDPRESS.ERROR.GENERIC_ERR
+                console.log(error)
                 let message = WORDPRESS.ERROR.GENERIC_ERR
                 if(error && error.response && error.response.data){
                     if(error.response.data.code == "invalid_username"){

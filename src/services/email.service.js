@@ -1,7 +1,8 @@
 // Load the AWS SDK for Node.js
 var AWS = require('aws-sdk');
 const config = require('../config');
-
+const {sendEmail,setEmailParams} = require("../utils/sendEmail");
+ 
 // Set the region and credentials
 AWS.config.update({
     region: config.aws.region,
@@ -10,7 +11,7 @@ AWS.config.update({
 });
 
 
-async function sendEmail(params){
+async function sendEmailAWS(params){
   // Create the promise and SES service object
   const sendPromise = new AWS.SES({apiVersion: '2010-12-01'}).sendEmail(params).promise();
 
@@ -24,7 +25,7 @@ async function sendEmail(params){
   });
 }
 
-function emailParams(sourceEmail,htmlData,subject,to,cc=[],textData=""){
+function emailParamsAWS(sourceEmail,htmlData,subject,to,cc=[],textData=""){
 
   // Create sendEmail params 
   var params = {
@@ -68,9 +69,9 @@ async function sendVerificationEmail(name,email,token){
     Thanks!<br>
     Autorite Team`
   const subject = `[Autorite] Verify your email`;
-  const sourceEmail = config.sourceEmail;
+  const sourceEmail = config.email.noreply;
 
-  let params = emailParams(sourceEmail,template,subject,email);
+  let params = setEmailParams(email,sourceEmail,subject,template);
   await sendEmail(params);
 }
 

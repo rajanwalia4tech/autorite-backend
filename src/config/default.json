@@ -18,9 +18,12 @@
         "secretAccessKey": "qbFRcncwx2cIy5cdkG6e2vzg+8Et4zWT0IEXnzkU",
         "region" : "ap-south-1"
     },
-    "sourceEmail": "rajanwalia334@gmail.com",
+    "email":{
+        "noreply": "noreply@autorite.me"
+    },
     "apiKeys":{
         "openAI": "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",
-        "valueSerp": "9FE05539C0F0467EB3DBFD6B909E02E7"
+        "valueSerp": "9FE05539C0F0467EB3DBFD6B909E02E7",
+        "sendgrid" : "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"
     }
 }
