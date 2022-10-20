@@ -52,8 +52,29 @@ const getUserById = (id) => {
 }
 
 
+const update = (payload)=>{
+    if (!Object.keys(payload.fields).length)
+        return Promise.reject("fields cannot be empty");
+        let query = `UPDATE users SET `;
+        let { fields } = payload;
+        query = Object.keys(fields).reduce(
+            (acc, curr) => acc + ` ${curr} ` + " = ?,",
+            query
+        );
+  
+        query = query.slice(0, -1) + ` WHERE id = ? `;
+        console.log(query);
+        let queryObj = {
+            query: query,
+            args: [...Object.values(payload.fields), payload.user_id],
+            event: "update Users",
+        };
+        return dbHandler.executeQuery(queryObj);
+}
+
 module.exports = {
     create,
     getUserByEmail,
-    getUserById
+    getUserById,
+    update
 }

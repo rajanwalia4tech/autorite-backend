@@ -19,18 +19,18 @@ const login = catchAsync(async (req, res) => {
 const sendVerificationEmail = catchAsync(async (req, res) => {
     const user = {
         id : req.body.user_id,
-        email: "rajanwalia334@gmail.com" || req.body.email
+        email : req.body.email
     }
     const verificationEmailToken = await tokenService.generateVerifyEmailToken(user);
     const userInfo = await userService.getUserById(user.id);
     await emailService.sendVerificationEmail(userInfo.name,user.email, verificationEmailToken);
-    return res.status(httpStatus.OK).send({message: "Verification email sent"});
+    return res.status(httpStatus.OK).send({message: "Verification email sent",verificationEmailToken});
 });
 
 const verifyEmail = catchAsync(async (req, res) => {
     const { token } = req.query;
-    const user = await tokenService.verifyEmailToken(token);
-    await userService.verifyEmail(user.id);
+    const userId = await tokenService.verifyEmailToken(token);
+    await userService.updateUser(userId, {isEmailVerified : true});
     res.status(httpStatus.OK).send({message: "Email verified successfully"});
 });
 

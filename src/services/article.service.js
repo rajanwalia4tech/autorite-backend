@@ -58,6 +58,7 @@ async function getAIQuestions(keyword,usecase){
         aiQuestions = aiQuestions.split("\n");
         return aiQuestions;
     }catch(err){
+        console.error("getAIQuestions", error.message)
         throw err;
     }
 }
@@ -69,6 +70,7 @@ async function getAIHeadings(keyword,usecase){
         aiHeadings = aiHeadings.split("\n");
         return aiHeadings;
     }catch(err){
+        console.error("getAIHeadings", error.message)
         throw err;
     }
 }

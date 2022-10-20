@@ -118,10 +118,18 @@ const generateVerifyEmailToken = async (user) => {
   return verifyEmailToken;
 };
 
+const verifyEmailToken = async (token) => {
+  const tokenInfo = await verifyToken(token, tokenTypes.VERIFY_EMAIL);
+  // blacklist old Token
+  await Token.updateToken({token_id:tokenInfo.id,fields:{blacklisted:true}});
+  return tokenInfo.user_id;
+}
+
 module.exports = {
   generateToken,
   saveToken,
   verifyToken,
+  verifyEmailToken,
   generateAuthTokens,
   generateResetPasswordToken,
   generateVerifyEmailToken,

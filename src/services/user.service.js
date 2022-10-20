@@ -22,7 +22,18 @@ const getUserById = async (id) => {
     }
     return user;
 }
+
+const updateUser = async (userId, updateBody) => {
+    try{
+        await User.update({user_id : userId,fields:updateBody});
+        return ;
+    }catch(err){
+        throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong");
+    }
+}
+
 module.exports = {
     createUser,
-    getUserById
+    getUserById,
+    updateUser
 }
