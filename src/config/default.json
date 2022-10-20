@@ -1,8 +1,8 @@
 {
     "db": {
-        "host": "13.232.181.213",
-        "user": "autorite",
-        "password": "autorite@123",
+        "host": "autorite-rds-new.cxmbugkmeadt.ap-south-1.rds.amazonaws.com",
+        "user": "admin",
+        "password": "mastkk123",
         "database": "autorite"
     },
     "jwt": {
