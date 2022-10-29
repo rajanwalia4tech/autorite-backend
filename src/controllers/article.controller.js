@@ -42,11 +42,23 @@ const saveArticle = catchAsync(async (req, res) => {
     });
 });
 
+const getArticleStatus = catchAsync(async (req, res) => {
+    const {articleId} = req.params;
+    const {user_id} = req.query;
+    const articleInfo = await articleService.getArticleInfo(user_id,articleId);
+    res.status(httpStatus.OK).send({
+        articleInfo,
+        message : "success"
+    });
+});
+
+
 
 module.exports = {
     create,
     getArticleById,
     getAllArticles,
-    saveArticle
+    saveArticle,
+    getArticleStatus
 }
 

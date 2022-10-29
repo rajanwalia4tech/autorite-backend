@@ -324,9 +324,30 @@ async function saveArticleById(userId,articleId,htmlContent){
     }
 }
 
+async function getArticleInfo(userId,articleId){
+    try{
+        const [article] = await Article.getUserArticle({
+            user_id : userId,
+            article_id:articleId,
+            fields : ["id","keyword","location","status"]
+        })
+        if(article){
+            return article;
+        }else{
+            throw new ApiError(httpStatus.FORBIDDEN ,ARTICLE.ERROR.NOT_ALLOWED);
+        }
+    }catch(err){
+        console.log("saveArticleById",err);
+        if(err.statusCode == httpStatus.FORBIDDEN)
+            throw err;
+        throw new ApiError(httpStatus.BAD_REQUEST,ARTICLE.ERROR.FETCH_FAILED);
+    }
+}
+
 module.exports = {
     createArticle,
     getArticle,
     getAllArticles,
-    saveArticleById
+    saveArticleById,
+    getArticleInfo
 }

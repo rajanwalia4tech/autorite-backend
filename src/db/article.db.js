@@ -186,10 +186,37 @@ const getArticleInfoById = (payload)=>{
             }
         );
     });
-
 }
 
 
+const getUserArticle = (payload)=>{
+    return new Promise((resolve, reject) => {
+        if(!payload.fields)
+            throw new Error("fields cannot be empty");
+        let fields = "";
+        for(let el of payload.fields){
+            fields+=el+",";
+        }
+        fields = fields.slice(0,-1);
+        let query = `SELECT ${fields} FROM user_articles  WHERE id=?`;
+
+        if(payload.user_id) 
+            query += ` AND user_id = ${payload.user_id};`
+        let queryObj = {
+            query: query,
+            args: [payload.article_id],
+            event: "getArticleInfoById",
+        };
+        dbHandler.executeQuery(queryObj).then(
+            (result) => {
+                resolve(result);
+            },
+            (error) => {
+                reject(error);
+            }
+        );
+    });
+}
 
 module.exports = {
     saveArticle,
@@ -199,5 +226,6 @@ module.exports = {
     updateArticleInfoById,
     getArticleInfo,
     getAllArticlesByUserId,
-    getArticleInfoById
+    getArticleInfoById,
+    getUserArticle
 }
