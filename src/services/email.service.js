@@ -59,7 +59,7 @@ function emailParamsAWS(sourceEmail,htmlData,subject,to,cc=[],textData=""){
 
 
 async function sendVerificationEmail(name,email,token){
-    const verificationLink = `http://localhost:3000/api/auth/verify-email?token=${token}`;
+    const verificationLink = `<a href=${config.autorite.frontend}/auth/verify-email?token=${token}>Verify Email</a>`
     let template = `Hi ${name},<br>
     <br>
     Thanks for signing up to autorite! Before we get started, we just need to confirm this is you.<br>

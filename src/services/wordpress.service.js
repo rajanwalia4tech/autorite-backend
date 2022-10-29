@@ -28,6 +28,8 @@ const getUserWordpressInfo = async(userId)=>{
             throw new ApiError(httpStatus.NOT_FOUND, WORDPRESS.ERROR.NOT_CONNECTED);
         return wordpressInfo;
     } catch (error) {
+        if(error.message == WORDPRESS.ERROR.NOT_CONNECTED)
+            throw new ApiError(httpStatus.NOT_FOUND, WORDPRESS.ERROR.NOT_CONNECTED);
         throw new ApiError(httpStatus.NOT_FOUND, ERROR.MESSAGE);
     }
 }
