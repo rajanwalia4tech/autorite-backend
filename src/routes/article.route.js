@@ -8,4 +8,5 @@ const auth = require("../middlewares/auth");
 router.post("/create",validate(articleValidation.create), auth.user,articleController.create);
 router.get("/all",auth.user, articleController.getAllArticles);
 router.get("/:articleId",validate(articleValidation.getArticleById), auth.user,articleController.getArticleById);
+router.patch("/save", auth.user,articleController.saveArticle);
 module.exports = router;

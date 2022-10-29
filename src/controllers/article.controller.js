@@ -2,6 +2,7 @@ const httpStatus = require("http-status");
 const catchAsync = require("../utils/CatchAsync");
 const {articleService} =require("../services");
 const {ARTICLE} = require("../utils/constants");
+const { saveArticleById } = require("../services/article.service");
 
 
 const create = catchAsync(async (req, res) => {
@@ -33,9 +34,19 @@ const getArticleById = catchAsync(async (req, res) => {
 });
 
 
+const saveArticle = catchAsync(async (req, res) => {
+    const {articleId,htmlContent,user_id} = req.body;
+    await articleService.saveArticleById(user_id,articleId,htmlContent);
+    res.status(httpStatus.OK).send({
+        message : "saved successfully"
+    });
+});
+
+
 module.exports = {
     create,
     getArticleById,
     getAllArticles,
+    saveArticle
 }
 

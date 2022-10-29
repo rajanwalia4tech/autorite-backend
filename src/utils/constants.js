@@ -14,6 +14,7 @@ module.exports = {
             NOT_FOUND: "Article not found",
             CREATION_FAILED : "Error in creating article",
             FETCH_FAILED : "Error in fetching article",
+            NOT_ALLOWED : "You are not allowed to access this article",
         },
         SUCCESS :{
             CREATED : "Article created successfully",

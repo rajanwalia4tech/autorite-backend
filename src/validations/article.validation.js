@@ -10,7 +10,7 @@ const create = {
     body: Joi.object().keys({
         keyword: Joi.string().required(),
         location: Joi.string().required(),
-        title : Joi.string().optional(),
+        title : Joi.string().min(0).optional(),
     }),
 };
 
