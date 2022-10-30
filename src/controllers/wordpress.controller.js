@@ -20,6 +20,7 @@ const connect = catchAsync(async (req, res) => {
 });
 
 const getWordpressInfo = catchAsync(async (req, res) => {
+    console.log("getWordpressInfo")
     const userWordpressInfo = await wordpressService.getUserWordpressInfo(req.query.user_id);
     let credentials = {
         username: userWordpressInfo.username,
@@ -27,10 +28,10 @@ const getWordpressInfo = catchAsync(async (req, res) => {
         password: userWordpressInfo.password
     }
     const response =  await wordpressService.getWordPressDetails(credentials);
-    
-    return res.status(httpStatus.OK).send({
-        response
-    })
+    response.w_id = userWordpressInfo.id;
+    response.username = userWordpressInfo.username;
+    response.domain =  userWordpressInfo.domain;
+    return res.status(httpStatus.OK).send(response)
 })
 
 module.exports = {
