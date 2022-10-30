@@ -25,6 +25,7 @@
     "morgan": "^1.10.0",
     "mysql2": "^2.3.3",
     "openai": "^3.0.0",
+    "underscore": "^1.13.6",
     "winston": "^3.8.2"
   },
   "devDependencies": {

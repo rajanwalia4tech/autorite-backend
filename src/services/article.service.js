@@ -4,6 +4,11 @@ const {Article} = require("../db");
 const {ARTICLE} = require("../utils/constants");
 const ApiError = require("../utils/ApiError");
 const httpStatus = require("http-status");
+const _ = require("underscore")
+
+function filterNItems(arr,n){ // Randomly select n items from array
+    return _.sample(arr,n);
+}
 
 function getRelatedQuestions(keyword,location){
     return new Promise(async (resolve,reject)=>{
@@ -12,15 +17,15 @@ function getRelatedQuestions(keyword,location){
             let relatedQuestions = [];
             let MAXIMUM_RELATED_QUESTIONS = 4;
             if(response.data.related_questions){
-                for(let el of response.data.related_questions){
-                    if(el.question){
-                        relatedQuestions.push(el.question.trim());
-                    }
-                    if(relatedQuestions.length === MAXIMUM_RELATED_QUESTIONS){
-                        break;
+                let related_questions = response.data.related_questions;
+                for(let el of related_questions){
+                    let idx = el.question.lastIndexOf("?");
+                    if(idx != -1){
+                        relatedQuestions.push(el.question.slice(0,idx+1));
                     }
                 }
             }
+            // relatedQuestions = filterNItems(relatedQuestions,MAXIMUM_RELATED_QUESTIONS);
             resolve(relatedQuestions);
         }catch(err){
             console.error(err);
@@ -34,17 +39,18 @@ function getQuoraQuestions(keyword,location){
         try{
             const response = await apiCalls.hitValueSerp(keyword,location,true);
             let quoraQuestions = [];
-            let MAXIMUM_QUORA_QUESTIONS = 8;
+            let MAXIMUM_QUORA_QUESTIONS = 6;
             if(response.data.organic_results){
-                for(let el of response.data.organic_results){
-                    if(el.title){
-                        quoraQuestions.push(el.title.replace(/\s(-|:)\s(\w+\b){0,}(\/\w+){0,}/g," ").trim());
-                    }
-                    if(quoraQuestions.length === MAXIMUM_QUORA_QUESTIONS){
-                        break;
+                let organic_results = response.data.organic_results;
+                for(let el of organic_results){
+                    let idx = el.title.lastIndexOf("?");
+                    if(idx != -1){
+                        quoraQuestions.push(el.title.slice(0,idx+1));
                     }
                 }
             }
+            console.time()
+            // quoraQuestions = filterNItems(quoraQuestions,MAXIMUM_QUORA_QUESTIONS);
             resolve(quoraQuestions);
         }catch(err){
             console.error(err);
@@ -70,6 +76,7 @@ async function getAIHeadings(keyword,usecase){
         const result = await generateService.generate({topic:keyword},usecase);
         let aiHeadings = result[0].text.trim();
         aiHeadings = aiHeadings.split("\n");
+        aiHeadings = removeCounting(aiHeadings);
         return aiHeadings;
     }catch(err){
         console.error(err);

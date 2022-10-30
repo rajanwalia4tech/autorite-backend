@@ -7,7 +7,9 @@ const { saveArticleById } = require("../services/article.service");
 
 const create = catchAsync(async (req, res) => {
     const {keyword,location,user_id,title} = req.body;
+    console.log("creating article  - ", keyword);
     const articleId = await articleService.createArticle(user_id,keyword,title,location);
+    console.log("article created - ", articleId);
     res.status(httpStatus.CREATED).send({
         articleId,
         message : ARTICLE.SUCCESS.CREATED
