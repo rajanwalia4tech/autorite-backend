@@ -108,10 +108,59 @@ const verifyWordpressCredentials = async (username,password,domain) => {
         }
 }
 
+prepareArraySettings = (arr) => {
+    let arrID = arr.map(item => {
+        return item.id
+    })
+    return arrID
+}
+
+publishToWordpress = async (request,credentials) => {
+    try{
+    let username = credentials.username
+    let password = credentials.password
+    let domain  = credentials.domain
+
+    let data = {
+        title: request.title,
+        content: request.content,
+        status: WORDPRESS.PUBLISH_STATUS[request.publish_status],
+    }
+
+    request.categories && request.categories.length ? data.categories = prepareArraySettings(request.categories) : 0
+    request.author && request.author.length ? data.author = request.author[0].id : 0
+    request.tags && request.tags.length ? data.tags = prepareArraySettings(request.tags) : 0
+    request.comment_status ? data.comment_status = request.comment_status : 0
+    request.ping_status ? data.ping_status = request.ping_status : 0
+    request.publish_password ? data.password = request.publish_password : 0
+    // request.featured_media && request.featured_media.length ? data.featured_media = request.featured_media[0].id : 0
+    // request.date ? data.date_gmt = request.date : 0
+    // request.slug ? data.slug = request.slug : 0
+
+    let headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Basic " + Buffer.from(`${username}:${password}`).toString("base64")
+    }
+    let url = `${domain}/?rest_route=/wp/v2/${request.publish_type}`;
+    let options = {
+        url,
+        method: 'POST',
+        headers: headers,
+        data: data
+    }
+    const resp = await axios(options)
+        const response = resp.data;
+        return response
+    }catch(err){
+        throw new ApiError(httpStatus.BAD_REQUEST, WORDPRESS.ERROR.PUBLISH)
+    }
+}
+
 module.exports = {
     saveUserWordpressInfo,
     verifyWordpressCredentials,
     getWordPressDetails,
     getUserWordpressInfo,
-    isDomainAlreadyConnected
+    isDomainAlreadyConnected,
+    publishToWordpress
 }

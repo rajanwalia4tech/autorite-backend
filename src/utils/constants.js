@@ -29,15 +29,24 @@ module.exports = {
         RECONNECT_ERR: "Authorization failed. Please re-connect the app.",
         NOT_CONNECTED: "You are not connected to wordpress",
         CONNECTED: "You are already connected to wordpress",
-        ALREADY_CONNECTED_DOMAIN : "Domain is is already connected with another user"
+        ALREADY_CONNECTED_DOMAIN : "Domain is is already connected with another user",
+        PUBLISH : "Error in publishing article to wordpress",
       },
       SUCCESS:{
         CONNECTED: "You have connected to wordpress successfully",
+        PUBLISHED: "Article published successfully",
       },
       ROUTE_TYPE:{
         USERS: "users",
         CATEGORIES: "categories",
         TAGS: "tags"
+      },
+      PUBLISH_STATUS:{
+        1: "publish",
+        2: "private",
+        3: "draft",
+        4: "pending",
+        3: "future"
       }
     },
     COMMON:{

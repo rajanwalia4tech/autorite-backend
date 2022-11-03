@@ -34,7 +34,21 @@ const getWordpressInfo = catchAsync(async (req, res) => {
     return res.status(httpStatus.OK).send(response)
 })
 
+const publishToWordpress = catchAsync(async (req, res) => {
+    const request = {...req.body};
+    const userWordpressInfo = await wordpressService.getUserWordpressInfo(request.user_id);
+    let credentials = {
+        username: userWordpressInfo.username,
+        domain: userWordpressInfo.domain,
+        password: userWordpressInfo.password
+    }
+    await wordpressService.publishToWordpress(request,credentials);
+    
+    return res.status(httpStatus.OK).send({message:WORDPRESS.SUCCESS.PUBLISHED})
+})
+
 module.exports = {
     connect,
-    getWordpressInfo
+    getWordpressInfo,
+    publishToWordpress
 }

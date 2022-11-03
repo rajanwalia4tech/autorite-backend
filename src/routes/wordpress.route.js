@@ -9,4 +9,6 @@ router.post("/connect",validate(wordpressValidation.connect),auth.user, wordpres
 
 router.get("/details", auth.user,wordpressController.getWordpressInfo);
 
+router.post("/publish", auth.user,wordpressController.publishToWordpress);
+
 module.exports = router;
