@@ -149,7 +149,7 @@ publishToWordpress = async (request,credentials) => {
         data: data
     }
     const resp = await axios(options)
-    const response = resp.data;
+    const response = { link : resp.data.link};
     return response
     }catch(error){
         let message = WORDPRESS.ERROR.PUBLISH
