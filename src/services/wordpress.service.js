@@ -149,10 +149,18 @@ publishToWordpress = async (request,credentials) => {
         data: data
     }
     const resp = await axios(options)
-        const response = resp.data;
-        return response
-    }catch(err){
-        throw new ApiError(httpStatus.BAD_REQUEST, WORDPRESS.ERROR.PUBLISH)
+    const response = resp.data;
+    return response
+    }catch(error){
+        let message = WORDPRESS.ERROR.PUBLISH
+        if(error && error.response && error.response.data){
+            if(error.response.data.code == "invalid_username"){
+                message = WORDPRESS.ERROR.RECONNECT;
+            }else if(error.response.data.code == "incorrect_password"){
+                message = WORDPRESS.ERROR.RECONNECT;
+            }
+        }
+        throw new ApiError(httpStatus.BAD_REQUEST, message)
     }
 }
 

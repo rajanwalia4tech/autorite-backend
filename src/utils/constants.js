@@ -31,6 +31,7 @@ module.exports = {
         CONNECTED: "You are already connected to wordpress",
         ALREADY_CONNECTED_DOMAIN : "Domain is is already connected with another user",
         PUBLISH : "Error in publishing article to wordpress",
+        RECONNECT: "Either username or password has been Changed. Please re-connect the wordpress."
       },
       SUCCESS:{
         CONNECTED: "You have connected to wordpress successfully",
