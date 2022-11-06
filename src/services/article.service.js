@@ -219,6 +219,25 @@ async function getAnswersAndParagraph(keyword,title,payload,usecases){
 
 }
 
+async function getFeaturedImage(keyword,usecase){
+    try{
+        const result = await generateService.generate({title:keyword},usecase);
+        let keywordsString = result[0].text.trim();
+        let keywords = keywordsString.split(",");
+        const res  = await apiCalls.hitPexelsAPI(keywords[0].trim());
+        const {data} = res;
+        if(res.status == httpStatus.OK &&  data && data.photos && data.photos.length>0){
+            if(data.photos[0].src && data.photos[0].src.medium){
+                return data.photos[0].src.medium;
+            }
+        }
+        return null;
+    }catch(err){
+        console.error(err);
+        return null;
+    }
+}
+
 async function createArticle(userId,keyword,title,location){
     let articleId;
     try{
@@ -226,15 +245,19 @@ async function createArticle(userId,keyword,title,location){
         articleId = article.insertId;
         
         const usecases = await generateService.getAllUsecases();
+        let featureImageUrl = getFeaturedImage(keyword,usecases[9]);
         if(!title)
             title = await getTitle(keyword,usecases[7]);
         const questionsHeadings = await getAllQuestionsAndHeadings(keyword,location,usecases);
         let  result = await getAnswersAndParagraph(keyword,title,questionsHeadings,usecases);
         
+        featureImageUrl = await featureImageUrl;
+
         await Article.saveArticleInfo({
             title,
             user_id : userId,
             article_id:articleId,
+            featured_image : featureImageUrl,
             related_questions: JSON.stringify(result.relatedQuestionsAnswers),
             ai_questions: JSON.stringify(result.aiQuestionAnswers),
             quora_questions: JSON.stringify(result.quoraQuestionsAnswers),

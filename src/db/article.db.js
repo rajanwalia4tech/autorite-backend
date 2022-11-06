@@ -117,7 +117,7 @@ const updateArticleInfoById = (payload)=>{
 
 const getArticleInfo = (payload)=>{
     return new Promise((resolve, reject) => {
-        let query = `SELECT ua.id,ua.article_id,ua.user_id,ua.keyword,ua.title,ua.location, uai.related_questions,uai.ai_questions,uai.quora_questions, uai.headings_paragraph, uai.conclusion_paragraph,uai.introduction_paragraph,uai.html_content,uai.created_at,uai.updated_at FROM user_articles ua INNER JOIN user_article_info uai ON uai.article_id=ua.id WHERE ua.id=${payload.article_id} `;
+        let query = `SELECT ua.id,ua.article_id,ua.user_id,ua.keyword,ua.title,ua.location,uai.featured_image, uai.related_questions,uai.ai_questions,uai.quora_questions, uai.headings_paragraph, uai.conclusion_paragraph,uai.introduction_paragraph,uai.html_content,uai.created_at,uai.updated_at FROM user_articles ua INNER JOIN user_article_info uai ON uai.article_id=ua.id WHERE ua.id=${payload.article_id} `;
         if(payload.user_id) 
             query += ` AND ua.user_id = ${payload.user_id};`
         let queryObj = {

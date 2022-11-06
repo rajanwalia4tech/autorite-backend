@@ -23,8 +23,9 @@
     },
     "apiKeys":{
         "openAI": "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",
-        "valueSerp": "91B4BB4DE3A74F2AA2CB57AD9EEFF5CB",
-        "sendgrid" : "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"
+        "valueSerp": "C310D1B79FB4430787C40C962C394153",
+        "sendgrid" : "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",
+        "pexels" : "563492ad6f917000010000013605e6733c5c4ee99e1fb885b5d91c74"
     },
     "autorite":{
         "frontend": "https://app.autorite.me",

@@ -17,6 +17,26 @@ async function hitValueSerp(keyword,location="India",isQuora=false){
     }
 }
 
+async function hitPexelsAPI(query){
+    try{
+        let url = `https://api.pexels.com/v1/search?query=${query}&per_page=2&size=large`;
+        let options = {
+            method : 'GET',
+            url,
+            headers : {
+                "Authorization" : config.apiKeys.pexels
+            }
+        }
+        const response = await axios(options);
+        return response
+    }catch(err){
+        console.error(err);
+        throw err;
+    }
+}
+
+
 module.exports={
-    hitValueSerp
+    hitValueSerp,
+    hitPexelsAPI
 }
