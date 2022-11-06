@@ -227,14 +227,18 @@ async function getFeaturedImage(keyword,usecase){
         const res  = await apiCalls.hitPexelsAPI(keywords[0].trim());
         const {data} = res;
         if(res.status == httpStatus.OK &&  data && data.photos && data.photos.length>0){
-            if(data.photos[0].src && data.photos[0].src.medium){
-                return data.photos[0].src.medium;
+            if(data.photos[0].src && data.photos[0].src){
+                return {
+                    small : data.photos[0].src.small || null,
+                    medium : data.photos[0].src.medium || null,
+                    large : data.photos[0].src.large || null
+                };
             }
         }
-        return null;
+        return {};
     }catch(err){
         console.error(err);
-        return null;
+        return {};
     }
 }
 
@@ -245,9 +249,10 @@ async function createArticle(userId,keyword,title,location){
         articleId = article.insertId;
         
         const usecases = await generateService.getAllUsecases();
-        let featureImageUrl = getFeaturedImage(keyword,usecases[9]);
+        
         if(!title)
             title = await getTitle(keyword,usecases[7]);
+        let featureImageUrl = getFeaturedImage(title,usecases[9]);
         const questionsHeadings = await getAllQuestionsAndHeadings(keyword,location,usecases);
         let  result = await getAnswersAndParagraph(keyword,title,questionsHeadings,usecases);
         
@@ -257,7 +262,7 @@ async function createArticle(userId,keyword,title,location){
             title,
             user_id : userId,
             article_id:articleId,
-            featured_image : featureImageUrl,
+            featured_image : JSON.stringify(featureImageUrl),
             related_questions: JSON.stringify(result.relatedQuestionsAnswers),
             ai_questions: JSON.stringify(result.aiQuestionAnswers),
             quora_questions: JSON.stringify(result.quoraQuestionsAnswers),
