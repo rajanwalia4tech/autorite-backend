@@ -6,3 +6,4 @@ module.exports.emailService = require("./email.service");
 module.exports.articleService = require("./article.service");
 module.exports.commonService = require("./common.service");
 module.exports.wordpressService = require("./wordpress.service");
+module.exports.subscriptionService = require("./subscription.service");

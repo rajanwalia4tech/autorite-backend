@@ -14,6 +14,14 @@ const saveUserWordpressInfo = async(wordPressInfo)=>{
     }
 }
 
+const updateUserWordpressInfo = async(wordPressInfo)=>{
+    try {
+        await Wordpress.update(wordPressInfo);
+    } catch (error) {
+        throw new ApiError(httpStatus.BAD_REQUEST, WORDPRESS.ERROR.DISCONNECT);
+    }
+}
+
 const isDomainAlreadyConnected = async(domain)=>{
     const [wordpressInfo] = await Wordpress.findByDomain(domain);
     if(wordpressInfo)
@@ -28,7 +36,7 @@ const getUserWordpressInfo = async(userId)=>{
             throw new ApiError(httpStatus.NOT_FOUND, WORDPRESS.ERROR.NOT_CONNECTED);
         return wordpressInfo;
     } catch (error) {
-        if(error.message == WORDPRESS.ERROR.NOT_CONNECTED)
+        if(error.statusCode == httpStatus.NOT_FOUND)
             throw new ApiError(httpStatus.NOT_FOUND, WORDPRESS.ERROR.NOT_CONNECTED);
         throw new ApiError(httpStatus.NOT_FOUND, ERROR.MESSAGE);
     }

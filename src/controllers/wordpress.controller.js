@@ -19,6 +19,20 @@ const connect = catchAsync(async (req, res) => {
     });
 });
 
+const disconnect = catchAsync(async (req, res) => {
+    const {user_id} = req.body;
+    // test if they are valid or not
+    await wordpressService.isDomainAlreadyConnected(domain);
+    
+    await wordpressService.verifyWordpressCredentials(username,password,domain);
+
+    // then store them in DB
+    await wordpressService.updateUserWordpressInfo({user_id ,username, domain, password,is_connected:true});
+    res.status(httpStatus.CREATED).send({ 
+        message: WORDPRESS.SUCCESS.CONNECTED
+    });
+});
+
 const getWordpressInfo = catchAsync(async (req, res) => {
     console.log("getWordpressInfo")
     const userWordpressInfo = await wordpressService.getUserWordpressInfo(req.query.user_id);
@@ -50,5 +64,6 @@ const publishToWordpress = catchAsync(async (req, res) => {
 module.exports = {
     connect,
     getWordpressInfo,
-    publishToWordpress
+    publishToWordpress,
+    disconnect
 }

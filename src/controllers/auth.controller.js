@@ -1,12 +1,13 @@
 const httpStatus = require("http-status");
 const catchAsync = require("../utils/CatchAsync");
-const { userService, tokenService, authService, emailService } = require("../services");
+const { userService, tokenService, authService, emailService, subscriptionService } = require("../services");
 
 
 const register = catchAsync(async (req, res) => {
     const user = await userService.createUser(req.body);
     const verificationEmailToken = await tokenService.generateVerifyEmailToken(user);
     await emailService.sendVerificationEmail(user.name,user.email, verificationEmailToken);
+    await subscriptionService.createCustomer(user.name,user.email);
     res.status(httpStatus.CREATED).send({ message: "You have registered successfully. Please verify your email" });
 });
 
