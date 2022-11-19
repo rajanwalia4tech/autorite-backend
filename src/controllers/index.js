@@ -3,3 +3,4 @@ module.exports.userController = require('./user.controller');
 module.exports.generateController = require('./generate.controller');
 module.exports.articleController = require('./article.controller');
 module.exports.wordpressController = require('./wordpress.controller');
+module.exports.SubscriptionController = require("./subscription.controller");
