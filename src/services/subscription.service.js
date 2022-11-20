@@ -2,12 +2,13 @@ const Razorpay = require('razorpay');
 const config = require("../config");
 const httpStatus = require("http-status");
 const ApiError = require('../utils/ApiError');
+const {Subscription} = require("../db");
 var instance = new Razorpay({
   key_id: config.apiKeys.razorpayKeyId,
   key_secret: config.apiKeys.razorpayKeySecret,
 });
 
-class Subscription{
+class SubscriptionService{
     async createCustomer(name,email,contact=""){
         try{
         const result = await instance.customers.create({name,email,contact});
@@ -19,6 +20,14 @@ class Subscription{
             throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong while creating merchant")
         }
     }
+    async getAllPlans(){
+        try{
+            const plans = await Subscription.getAllPlans();
+            return plans;
+        }catch(err){
+            throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong while fetching plans")
+        }
+    }
 }
 
-module.exports = new Subscription();
+module.exports = new SubscriptionService();

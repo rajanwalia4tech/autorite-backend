@@ -10,7 +10,12 @@ const webhook = catchAsync(async (req, res) => {
     return res.status(httpStatus.OK).send({status: "DONE"});
 });
 
+const getAllPlans = catchAsync(async (req, res) => {
+    const plans = await subscriptionService.getAllPlans();
+    return res.status(httpStatus.OK).send(plans);
+});
 
 module.exports = {
-    webhook
+    webhook,
+    getAllPlans
 }
