@@ -7,7 +7,6 @@ const register = catchAsync(async (req, res) => {
     const user = await userService.createUser(req.body);
     const verificationEmailToken = await tokenService.generateVerifyEmailToken(user);
     await emailService.sendVerificationEmail(user.name,user.email, verificationEmailToken);
-    await subscriptionService.createCustomer(user.name,user.email);
     res.status(httpStatus.CREATED).send({ message: "You have registered successfully. Please verify your email" });
 });
 
@@ -32,7 +31,9 @@ const sendVerificationEmail = catchAsync(async (req, res) => {
 const verifyEmail = catchAsync(async (req, res) => {
     const { token } = req.query;
     const userId = await tokenService.verifyEmailToken(token);
-    await userService.updateUser(userId, {isEmailVerified : true});
+    const userInfo = await userService.getUserById(userId);
+    const razorpayId = await subscriptionService.createCustomer(userInfo.name,userInfo.email);
+    await userService.updateUser(userId, {isEmailVerified : true,razorpay_id : razorpayId});
     res.status(httpStatus.OK).send({message: "Email verified successfully"});
 });
 
