@@ -51,6 +51,26 @@ module.exports = {
         3: "future"
       }
     },
+    SUBSCRIPTION:{
+      PLAN_TYPE:{
+        TRIAL : {
+          CATEGORY : "TRIAL",
+          PLAN_ID : 1,
+        },
+        BASIC : {
+          CATEGORY : "SUPER",
+          PLAN_ID : 2,
+        },
+        PREMIUM :{
+          CATEGORY: "PREMIUM",
+          PLAN_ID : 3,
+        }
+      },
+      STATUS:{
+        ENABLE : "ENABLE",
+        DISABLE : "DISABLE"
+      }
+    },
     COMMON:{
         DEFAULT_LOCATIONS : [
             {

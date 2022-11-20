@@ -1,6 +1,7 @@
 const httpStatus = require("http-status");
 const catchAsync = require("../utils/CatchAsync");
 const { userService, tokenService, authService, emailService, subscriptionService } = require("../services");
+const { Subscription } = require("../db");
 
 
 const register = catchAsync(async (req, res) => {
@@ -34,6 +35,7 @@ const verifyEmail = catchAsync(async (req, res) => {
     const userInfo = await userService.getUserById(userId);
     const razorpayId = await subscriptionService.createCustomer(userInfo.name,userInfo.email);
     await userService.updateUser(userId, {isEmailVerified : true,razorpay_id : razorpayId});
+    subscriptionService.addUserOnTrialPlan(userId);
     res.status(httpStatus.OK).send({message: "Email verified successfully"});
 });
 

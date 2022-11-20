@@ -3,6 +3,7 @@ const config = require("../config");
 const httpStatus = require("http-status");
 const ApiError = require('../utils/ApiError');
 const {Subscription} = require("../db");
+const {SUBSCRIPTION} = require("../utils/constants");
 var instance = new Razorpay({
   key_id: config.apiKeys.razorpayKeyId,
   key_secret: config.apiKeys.razorpayKeySecret,
@@ -60,6 +61,24 @@ class SubscriptionService{
             return subscriptionSessionPayload;
         }catch(err){
             throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong while creating subscription")
+        }
+    }
+
+    async addUserOnTrialPlan(userId){
+        try{
+            const [plan] = await Subscription.getPlanById(SUBSCRIPTION.PLAN_TYPE.TRIAL.PLAN_ID);
+            if(!plan) throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Plan");
+            await Subscription.createUserSubscription({
+                user_id : userId,
+                plan_id : plan.plan_id,
+                credits : plan.wallet_credits,
+                status : SUBSCRIPTION.STATUS.ENABLE,
+                subscription_at : new Date(),
+                expiration_at : null
+            });
+            return {message : "Successfully added user on trial plan"};
+        }catch(err){
+            throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong in adding user on Trial Plan")
         }
     }
 }

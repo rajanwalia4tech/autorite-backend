@@ -29,8 +29,21 @@ function saveSession(payload){
     };
     return dbHandler.executeQuery(queryObj);
 }
+
+function createUserSubscription(payload){
+    let query = "INSERT INTO user_subscription SET ?;"
+    let queryObj = {
+        query: query,
+        args: [payload],
+        event: "update article",
+    };
+    return dbHandler.executeQuery(queryObj);
+}
+
+
 module.exports = {
     getAllPlans,
     getPlanById,
-    saveSession
+    saveSession,
+    createUserSubscription
 }
