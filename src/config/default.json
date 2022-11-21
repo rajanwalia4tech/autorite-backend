@@ -27,7 +27,8 @@
         "sendgrid" : "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",
         "pexels" : "563492ad6f917000010000013605e6733c5c4ee99e1fb885b5d91c74",
         "razorpayKeyId" : "rzp_test_dqxSieRTxYtO1b",
-        "razorpayKeySecret" : "ILASalJZCMwzUDVsETEtAxB3"
+        "razorpayKeySecret" : "ILASalJZCMwzUDVsETEtAxB3",
+        "razorpayWebhookSecret" : "RajaZindabad@123"
     },
     "autorite":{
         "frontend": "https://app.autorite.me",

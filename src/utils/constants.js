@@ -52,6 +52,11 @@ module.exports = {
       }
     },
     SUBSCRIPTION:{
+      SESSION:{
+        CREATED:"created",
+        COMPLETED:"completed",
+        CANCELLED:"cancelled",
+      },
       PLAN_TYPE:{
         TRIAL : {
           CATEGORY : "TRIAL",

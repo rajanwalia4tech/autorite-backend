@@ -1,3 +1,5 @@
 node_modules
 practice.js
 .DS_Store
+TODO.txt
+*.json

@@ -1,3 +1,4 @@
+const {SUBSCRIPTION} = require("../utils/constants");
 const {dbHandler} = require("./db");
 
 function getAllPlans(){
@@ -10,11 +11,14 @@ function getAllPlans(){
     return dbHandler.executeQuery(queryObj);
 }
 
-function getPlanById(planId){
-    let query = `select plan_id,product_id,plan_name,plan_type,plan_category,price,currency, wallet_credits,validity from subscription_plans WHERE plan_id = ? and is_active=1`;
+function getPlanById(payload){
+    let query = `select plan_id,product_id,plan_name,plan_type,plan_category,price,currency, wallet_credits,validity from subscription_plans WHERE is_active=1 `;
+    // let query = dbHandler.generateSelectQuery({table: "subscription_plans", fields : ["plan_id","product_id","plan_name","plan_type","plan_category","price","currency","wallet_credits","validity"], {plan_id:planId, is_active:1}});
+    if(payload.plan_id) query += ` AND plan_id = ${payload.plan_id}`;
+    if(payload.product_id) query += ` AND product_id = ${payload.product_id}`;
     let queryObj = {
         query: query,
-        args: [planId],
+        args: [],
         event: "getPlanById",
     };
     return dbHandler.executeQuery(queryObj);
@@ -40,10 +44,63 @@ function createUserSubscription(payload){
     return dbHandler.executeQuery(queryObj);
 }
 
+const updateUserSubscription = (payload)=>{
+    if (!Object.keys(payload.fields).length)
+        throw new Error ("fields cannot be empty");
+    let query = `UPDATE user_subscription SET `;
+    let { fields } = payload;
+    query = Object.keys(fields).reduce(
+        (acc, curr) => acc + ` ${curr} ` + " = ?,",
+        query
+    );
 
+    query = query.slice(0, -1) + ` WHERE user_id = ? `;
+    let queryObj = {
+        query: query,
+        args: [...Object.values(payload.fields), payload.user_id],
+        event: "update article",
+    };
+    return dbHandler.executeQuery(queryObj);
+}
+
+const getUserSubscriptionSession = (payload)=>{
+    let query = `SELECT * FROM subscription_session WHERE status=? `;
+
+    if(payload.subscription_id) query += ` AND subscription_id="${payload.subscription_id}"`;
+    if(payload.user_id) query += ` AND user_id=${payload.user_id}`;
+    console.log(query)
+    let queryObj = {
+        query: query,
+        args: [payload.status],
+        event: "getUserSubscriptionSession",
+    };
+    return dbHandler.executeQuery(queryObj);
+}
+
+const updateUserSubscriptionSession = (payload)=>{
+    if (!Object.keys(payload.fields).length)
+        throw new Error ("fields cannot be empty");
+    let query = `UPDATE subscription_session SET `;
+    let { fields } = payload;
+    query = Object.keys(fields).reduce(
+        (acc, curr) => acc + ` ${curr} ` + " = ?,",
+        query
+    );
+
+    query = query.slice(0, -1) + ` WHERE id = ? `;
+    let queryObj = {
+        query: query,
+        args: [...Object.values(payload.fields), payload.id],
+        event: "update article",
+    };
+    return dbHandler.executeQuery(queryObj);
+}
 module.exports = {
     getAllPlans,
     getPlanById,
     saveSession,
-    createUserSubscription
+    createUserSubscription,
+    updateUserSubscription,
+    getUserSubscriptionSession,
+    updateUserSubscriptionSession
 }

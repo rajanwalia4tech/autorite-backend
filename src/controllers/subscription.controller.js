@@ -2,13 +2,13 @@ const httpStatus = require("http-status");
 const catchAsync = require("../utils/CatchAsync");
 const {subscriptionService} =require("../services");
 const ApiError = require("../utils/ApiError");
-
+const config = require("../config");
+const fs = require("fs");
+const { isGeneratorFunction } = require("util/types");
 
 
 const webhook = catchAsync(async (req, res) => {
-    const request = {...req.body};
-    console.log(request);
-    return res.status(httpStatus.OK).send({status: "DONE"});
+    await subscriptionService.handleWebhook(req,res);
 });
 
 const getAllPlans = catchAsync(async (req, res) => {
