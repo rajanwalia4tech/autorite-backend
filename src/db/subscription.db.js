@@ -63,15 +63,20 @@ const updateUserSubscription = (payload)=>{
     return dbHandler.executeQuery(queryObj);
 }
 
-const getUserSubscriptionSession = (payload)=>{
-    let query = `SELECT * FROM subscription_session WHERE status=? `;
-
+const getUserSubscriptionSession = (payload)=>{ 
+    let query ;
+    if(payload.id)
+    query = `SELECT id session_id, user_id, plan_id,status, subscription_id FROM subscription_session WHERE id = ${payload.id} `;
+    
+    if(payload.status)
+        query = `SELECT * FROM subscription_session WHERE status=${payload.status} `;
     if(payload.subscription_id) query += ` AND subscription_id="${payload.subscription_id}"`;
+
     if(payload.user_id) query += ` AND user_id=${payload.user_id}`;
     console.log(query)
     let queryObj = {
         query: query,
-        args: [payload.status],
+        args: [],
         event: "getUserSubscriptionSession",
     };
     return dbHandler.executeQuery(queryObj);

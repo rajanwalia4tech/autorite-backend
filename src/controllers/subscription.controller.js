@@ -26,8 +26,16 @@ const createSubscription = catchAsync(async (req, res) => {
     return res.status(httpStatus.OK).send({subscriptionInfo,message:"Subscription Session Created"});
 });
 
+const getSessionById = catchAsync(async (req, res) => {
+    const request = {...req.query};
+    const sessionId = req.params.sessionId;
+    const subscriptionInfo  = await subscriptionService.getSessionById(sessionId,request.user_id);
+    return res.status(httpStatus.OK).send({subscriptionInfo,message:"Subscription Session Created"});
+});
+
 module.exports = {
     webhook,
     getAllPlans,
-    createSubscription
+    createSubscription,
+    getSessionById
 }

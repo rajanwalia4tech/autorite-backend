@@ -23,14 +23,22 @@ class SubscriptionService{
             throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong while creating merchant")
         }
     }
+
     async getAllPlans(){
         const plans = await Subscription.getAllPlans();
         return plans;
     }
+
     async getPlanById(planId){
         const [plan] = await Subscription.getPlanById({plan_id :planId});
         if(!plan) throw new ApiError(httpStatus.NOT_FOUND, "Plan not found")
         return plan;
+    }
+
+    async getSessionById(sessionId,user_id){
+        const [sessionInfo] = await Subscription.getUserSubscriptionSession({id:sessionId,user_id});
+        if(!sessionInfo) throw new ApiError(httpStatus.BAD_REQUEST, "Session not found");
+        return sessionInfo;
     }
     async createSubscription(request,planInfo){
         let options = {
@@ -48,7 +56,8 @@ class SubscriptionService{
             status : SUBSCRIPTION.SESSION.CREATED,
             short_url:subscriptionInfo.short_url,
         };
-        await Subscription.saveSession(subscriptionSessionPayload);
+        const sessionInfo = await Subscription.saveSession(subscriptionSessionPayload);
+        subscriptionSessionPayload.session_id = sessionInfo.insertId;
         return subscriptionSessionPayload;
     }
 
