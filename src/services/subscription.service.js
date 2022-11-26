@@ -87,38 +87,36 @@ class SubscriptionService{
         return {message : `Successfully added user on ${planInfo.name} plan!`};
     }
 
-    async handleWebhook(req,res){
+    async handleWebhook(req){
         const webhookSecret = config.apiKeys.razorpayWebhookSecret;
         const crypto = require('crypto')
         const shasum = crypto.createHmac('sha256', webhookSecret)
         shasum.update(JSON.stringify(req.body))
         const digest = shasum.digest('hex')
-        console.log(digest, req.headers['x-razorpay-signature'])
+        // console.log(digest, req.headers['x-razorpay-signature'])
     
         if (digest === req.headers['x-razorpay-signature']) {
-            console.log('request is legit')
             const request = {...req.body};
+            console.log("event --- ",request.event );
+            const plan_id = request?.payload?.subscription?.entity?.plan_id;
+            const subscription_id = request?.payload?.subscription?.entity?.id;
+            const [userSubscriptionSession] = await Subscription.getUserSubscriptionSession({status:SUBSCRIPTION.SESSION.CREATED, subscription_id});
+
             if(request.event === "payment.captured"){ // store in transaction table
-                return res.status(httpStatus.OK).send({status: "DONE"});
-            }else if(request.event == "subscription.completed"){
-                const plan_id = request?.payload?.subscription?.entity?.plan_id;
-                const subscription_id = request?.payload?.subscription?.entity?.id;
-                
-                // if(subscription_id)
-                const [userSubscriptionSession] = await Subscription.getUserSubscriptionSession({status:SUBSCRIPTION.SESSION.CREATED, subscription_id});
                 if(userSubscriptionSession?.user_id && plan_id){
                     await this.updateUserSubscription(userSubscriptionSession?.user_id,userSubscriptionSession.plan_id);
                     await Subscription.updateUserSubscriptionSession({id:userSubscriptionSession.id,fields:{
                         status : SUBSCRIPTION.SESSION.COMPLETED
                     }});
                 }
-                return res.status(httpStatus.OK).send({status: "DONE"});
+            }else if(request.event == "subscription.completed"){
             }else if(request.event === "payment.failed"){ // update transaction table
-                
-                return res.status(httpStatus.OK).send({status: "DONE"});
+                await Subscription.updateUserSubscriptionSession({id:userSubscriptionSession.id,fields:{
+                    status : SUBSCRIPTION.SESSION.FAILED
+                }});
             }
             // process it
-            return res.status(httpStatus.OK).send({status: "DONE"});
+            return true;
         } else {
             // pass it
             throw new ApiError(httpStatus.BAD_REQUEST, "You are not authorized!");

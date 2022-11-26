@@ -9,6 +9,7 @@ const { isGeneratorFunction } = require("util/types");
 
 const webhook = catchAsync(async (req, res) => {
     await subscriptionService.handleWebhook(req,res);
+    return res.status(httpStatus.OK).send({message :"success"});
 });
 
 const getAllPlans = catchAsync(async (req, res) => {

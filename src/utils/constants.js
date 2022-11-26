@@ -56,6 +56,7 @@ module.exports = {
         CREATED:"created",
         COMPLETED:"completed",
         CANCELLED:"cancelled",
+        FAILED:"failed"
       },
       PLAN_TYPE:{
         TRIAL : {
