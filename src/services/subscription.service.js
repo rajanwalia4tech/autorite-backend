@@ -24,6 +24,15 @@ class SubscriptionService{
         }
     }
 
+    async getUserPlanInfo(user_id){
+        let [planInfo] = await Subscription.getUserSubscription({user_id,status:SUBSCRIPTION.STATUS.ENABLE});
+        if(!planInfo){
+            await this.addUserOnTrialPlan(user_id);
+            [planInfo] = await Subscription.getUserSubscription({user_id,status:SUBSCRIPTION.STATUS.ENABLE});
+        }
+        return planInfo;
+    }
+
     async getAllPlans(){
         const plans = await Subscription.getAllPlans();
         return plans;
@@ -93,7 +102,7 @@ class SubscriptionService{
 
         // Add the user on new Plan
         await this.addUserOnPlan(user_id,planInfo);
-        console.log("User added on new plan"+planInfo.name);
+        console.log("User added on new plan"+planInfo.plan_name);
         return {message : `Successfully added user on ${planInfo.name} plan!`};
     }
 

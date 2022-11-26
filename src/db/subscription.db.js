@@ -44,6 +44,18 @@ function createUserSubscription(payload){
     return dbHandler.executeQuery(queryObj);
 }
 
+const getUserSubscription = (payload)=>{ 
+    let query = `select us.id,us.user_id, us.plan_id, sp.plan_name,sp.plan_type,sp.plan_category,us.status,us.credits,us.subscription_at,us.expiration_at from user_subscription us JOIN subscription_plans sp ON sp.plan_id= us.plan_id WHERE us.user_id=${payload.user_id} `;
+    if(payload.status) query += ` AND status="${payload.status}"`;
+    console.log(query)
+    let queryObj = {
+        query: query,
+        args: [],
+        event: "getUserSubscriptionSession",
+    };
+    return dbHandler.executeQuery(queryObj);
+}
+
 const updateUserSubscription = (payload)=>{
     if (!Object.keys(payload.fields).length)
         throw new Error ("fields cannot be empty");
@@ -106,6 +118,7 @@ module.exports = {
     saveSession,
     createUserSubscription,
     updateUserSubscription,
+    getUserSubscription,
     getUserSubscriptionSession,
     updateUserSubscriptionSession
 }

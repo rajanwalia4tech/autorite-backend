@@ -13,8 +13,10 @@ const webhook = catchAsync(async (req, res) => {
 });
 
 const getAllPlans = catchAsync(async (req, res) => {
+    const request = {...req.query};
+    const userPlanInfo = await subscriptionService.getUserPlanInfo(request.user_id);
     const plans = await subscriptionService.getAllPlans();
-    return res.status(httpStatus.OK).send(plans);
+    return res.status(httpStatus.OK).send({userPlanInfo,plans});
 });
 
 const createSubscription = catchAsync(async (req, res) => {
