@@ -93,6 +93,7 @@ class SubscriptionService{
 
         // Add the user on new Plan
         await this.addUserOnPlan(user_id,planInfo);
+        console.log("User added on new plan"+planInfo.name);
         return {message : `Successfully added user on ${planInfo.name} plan!`};
     }
 
@@ -107,16 +108,17 @@ class SubscriptionService{
         if (digest === req.headers['x-razorpay-signature']) {
             const request = {...req.body};
             console.log("event --- ",request.event );
-            const plan_id = request?.payload?.subscription?.entity?.plan_id;
+            // const plan_id = request?.payload?.subscription?.entity?.plan_id;
             const subscription_id = request?.payload?.subscription?.entity?.id;
             const [userSubscriptionSession] = await Subscription.getUserSubscriptionSession({status:SUBSCRIPTION.SESSION.CREATED, subscription_id});
 
             if(request.event === "payment.captured"){ // store in transaction table
-                if(userSubscriptionSession?.user_id && plan_id){
+                if(userSubscriptionSession?.user_id){
                     await this.updateUserSubscription(userSubscriptionSession?.user_id,userSubscriptionSession.plan_id);
                     await Subscription.updateUserSubscriptionSession({id:userSubscriptionSession.id,fields:{
                         status : SUBSCRIPTION.SESSION.COMPLETED
                     }});
+                    console.log("subscription completed");
                 }
             }else if(request.event == "subscription.completed"){
             }else if(request.event === "payment.failed"){ // update transaction table
