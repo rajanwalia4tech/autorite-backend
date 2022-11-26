@@ -69,7 +69,7 @@ const getUserSubscriptionSession = (payload)=>{
     query = `SELECT id session_id, user_id, plan_id,status, subscription_id FROM subscription_session WHERE id = ${payload.id} `;
     
     if(payload.status)
-        query = `SELECT * FROM subscription_session WHERE status=${payload.status} `;
+        query = `SELECT * FROM subscription_session WHERE status="${payload.status}" `;
     if(payload.subscription_id) query += ` AND subscription_id="${payload.subscription_id}"`;
 
     if(payload.user_id) query += ` AND user_id=${payload.user_id}`;
