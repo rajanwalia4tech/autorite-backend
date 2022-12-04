@@ -78,7 +78,7 @@ const updateUserSubscription = (payload)=>{
 const getUserSubscriptionSession = (payload)=>{ 
     let query ;
     if(payload.id)
-    query = `SELECT id session_id, user_id, plan_id,status, subscription_id FROM subscription_session WHERE id = ${payload.id} `;
+        query = `SELECT id session_id, user_id, plan_id,status, subscription_id FROM subscription_session WHERE id = ${payload.id} `;
     
     if(payload.status)
         query = `SELECT * FROM subscription_session WHERE status="${payload.status}" `;

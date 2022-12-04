@@ -379,10 +379,26 @@ async function getArticleInfo(userId,articleId){
     }
 }
 
+async function countAllArticlesByUserId(userId){
+  const [totalArticles] = await Article.countAllArticles({
+        user_id : userId,
+        status : ARTICLE.STATUS.COMPLETED
+    });
+    return totalArticles.total_articles;
+}
+
+async function checkWalletCredits(user_id, userplanInfo){
+    const userTotalArticles = await countAllArticlesByUserId(user_id);
+    if(userTotalArticles >= userplanInfo.credits) throw new ApiError(httpStatus.BAD_REQUEST, "You have reached your limit of articles. Please upgrade your plan");
+    return true;
+}
+
 module.exports = {
     createArticle,
     getArticle,
     getAllArticles,
     saveArticleById,
-    getArticleInfo
+    getArticleInfo,
+    countAllArticlesByUserId,
+    checkWalletCredits
 }

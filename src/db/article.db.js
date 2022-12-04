@@ -218,6 +218,16 @@ const getUserArticle = (payload)=>{
     });
 }
 
+const countAllArticles = (payload)=>{
+    let query = `SELECT COUNT(*) as total_articles FROM user_articles WHERE user_id=${payload.user_id} AND status="${payload.status}"`;
+    let queryObj = {
+        query: query,
+        args: [],
+        event: "getArticleInfoById",
+    };
+    return dbHandler.executeQuery(queryObj);
+}
+
 module.exports = {
     saveArticle,
     saveArticleInfo,
@@ -227,5 +237,6 @@ module.exports = {
     getArticleInfo,
     getAllArticlesByUserId,
     getArticleInfoById,
-    getUserArticle
+    getUserArticle,
+    countAllArticles
 }

@@ -3,8 +3,9 @@ const moment = require("moment");
 const config = require("../config");
 const httpStatus = require("http-status");
 const ApiError = require('../utils/ApiError');
-const {Subscription} = require("../db");
+const {Subscription, Article} = require("../db");
 const {SUBSCRIPTION} = require("../utils/constants");
+const { articleService } = require('.');
 var instance = new Razorpay({
   key_id: config.apiKeys.razorpayKeyId,
   key_secret: config.apiKeys.razorpayKeySecret,
@@ -24,13 +25,28 @@ class SubscriptionService{
         }
     }
 
-    async getUserPlanInfo(user_id){
-        let [planInfo] = await Subscription.getUserSubscription({user_id,status:SUBSCRIPTION.STATUS.ENABLE});
-        if(!planInfo){
+    async checkUserSubscription(user_id){
+        let [userplanInfo] = await Subscription.getUserSubscription({user_id,status:SUBSCRIPTION.STATUS.ENABLE});
+        if(!userplanInfo){ // TODO : need to be removed
             await this.addUserOnTrialPlan(user_id);
-            [planInfo] = await Subscription.getUserSubscription({user_id,status:SUBSCRIPTION.STATUS.ENABLE});
+            [userplanInfo] = await Subscription.getUserSubscription({user_id,status:SUBSCRIPTION.STATUS.ENABLE});
         }
-        return planInfo;
+        let subscription_at = moment();
+        let expiration_at = moment(userplanInfo.expiration_at);
+        if(expiration_at.diff(subscription_at, 'days') <0){ // Plan Expired
+            throw new ApiError(httpStatus.BAD_REQUEST, "Your plan has been expired!!! Please upgrade your plan");
+        }
+
+        return userplanInfo;
+    }
+
+    async getUserPlanInfo(user_id){
+        let [userplanInfo] = await Subscription.getUserSubscription({user_id,status:SUBSCRIPTION.STATUS.ENABLE});
+        if(!userplanInfo){ // TODO : need to be removed
+            await this.addUserOnTrialPlan(user_id);
+            [userplanInfo] = await Subscription.getUserSubscription({user_id,status:SUBSCRIPTION.STATUS.ENABLE});
+        }
+        return userplanInfo;
     }
 
     async getAllPlans(){

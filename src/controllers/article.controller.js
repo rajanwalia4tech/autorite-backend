@@ -1,6 +1,6 @@
 const httpStatus = require("http-status");
 const catchAsync = require("../utils/CatchAsync");
-const {articleService} =require("../services");
+const {articleService, subscriptionService, commonService} =require("../services");
 const {ARTICLE} = require("../utils/constants");
 const { saveArticleById } = require("../services/article.service");
 
@@ -8,6 +8,8 @@ const { saveArticleById } = require("../services/article.service");
 const create = catchAsync(async (req, res) => {
     const {keyword,location,user_id,title} = req.body;
     console.log("creating article  - ", keyword);
+    const userPlanInfo = await subscriptionService.checkUserSubscription(user_id);
+    await articleService.checkWalletCredits(user_id, userPlanInfo);
     const articleId = await articleService.createArticle(user_id,keyword,title,location);
     console.log("article created - ", articleId);
     res.status(httpStatus.CREATED).send({
