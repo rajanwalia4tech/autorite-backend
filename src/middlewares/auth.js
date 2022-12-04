@@ -19,7 +19,7 @@ function user(req, res, next) {
     }
     return next();
   } catch (ex) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid token.");
+    throw new ApiError(httpStatus.UNAUTHORIZED, "Access denied. No token provided."); // invalid token
   }
 }
 
