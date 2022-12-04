@@ -33,9 +33,11 @@ module.exports = {
         PUBLISH : "Error in publishing article to wordpress",
         RECONNECT: "Either username or password has been Changed. Please re-connect the wordpress.",
         DISCONNECT : "Something went wrong while disconnecting wordpress",
+        NOT_ALLOWED : "You are not allowed to access this service",
       },
       SUCCESS:{
         CONNECTED: "You have connected to wordpress successfully",
+        DISCONNECTED: "You have disconnected from wordpress successfully",
         PUBLISHED: "Article published successfully",
       },
       ROUTE_TYPE:{

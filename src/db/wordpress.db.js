@@ -64,11 +64,11 @@ const update = (payload)=>{
             query
         );
   
-        query = query.slice(0, -1) + ` WHERE user_id = ? `;
+        query = query.slice(0, -1) + ` WHERE id = ? `;
         console.log(query);
         let queryObj = {
             query: query,
-            args: [...Object.values(payload.fields), payload.user_id],
+            args: [...Object.values(payload.fields), payload.id],
             event: "update Wordpress Info",
         };
         dbHandler.executeQuery(queryObj).then(
@@ -81,10 +81,20 @@ const update = (payload)=>{
         );
     });
   }
+  const isValidUser = (userId, wordpressId)=>{
+        const query = `SELECT * FROM user_wordpress_info WHERE id=? AND user_id = ? AND is_connected=1 ORDER BY updated_at DESC LIMIT 1;`;
+        let queryObj = {
+            query,
+            args: [wordpressId,userId],
+            event: "isValidUser"
+        }
+        return dbHandler.executeQuery(queryObj);
+}
 
 module.exports = {
     create,
     findByUserId,
     findByDomain,
-    update
+    update,
+    isValidUser
 }

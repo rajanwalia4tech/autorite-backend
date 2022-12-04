@@ -14,13 +14,17 @@ const saveUserWordpressInfo = async(wordPressInfo)=>{
     }
 }
 
-const updateUserWordpressInfo = async(wordPressInfo)=>{
-    try {
-        await Wordpress.update(wordPressInfo);
-    } catch (error) {
-        throw new ApiError(httpStatus.BAD_REQUEST, WORDPRESS.ERROR.DISCONNECT);
-    }
+const isValidUser = async (userId,wordpressId) => {
+    const [wordpressInfo] = await Wordpress.isValidUser(userId,wordpressId);
+    if(!wordpressInfo)
+        throw new ApiError(httpStatus.FORBIDDEN, WORDPRESS.ERROR.NOT_ALLOWED);
+    return ;
 }
+
+const updateUserWordpressInfo = async(wordpressId)=>{
+    await Wordpress.update({id : wordpressId, fields : {is_connected:false}});
+    return true;
+}   
 
 const isDomainAlreadyConnected = async(domain)=>{
     const [wordpressInfo] = await Wordpress.findByDomain(domain);
@@ -178,5 +182,7 @@ module.exports = {
     getWordPressDetails,
     getUserWordpressInfo,
     isDomainAlreadyConnected,
-    publishToWordpress
+    publishToWordpress,
+    isValidUser,
+    updateUserWordpressInfo
 }

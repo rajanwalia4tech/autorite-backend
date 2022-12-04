@@ -20,16 +20,13 @@ const connect = catchAsync(async (req, res) => {
 });
 
 const disconnect = catchAsync(async (req, res) => {
-    const {user_id} = req.body;
+    const {user_id,w_id} = req.body;
     // test if they are valid or not
-    await wordpressService.isDomainAlreadyConnected(domain);
-    
-    await wordpressService.verifyWordpressCredentials(username,password,domain);
-
+    await wordpressService.isValidUser(user_id,w_id);   
     // then store them in DB
-    await wordpressService.updateUserWordpressInfo({user_id ,username, domain, password,is_connected:true});
+    await wordpressService.updateUserWordpressInfo(w_id);
     res.status(httpStatus.CREATED).send({ 
-        message: WORDPRESS.SUCCESS.CONNECTED
+        message: WORDPRESS.SUCCESS.DISCONNECTED
     });
 });
 
